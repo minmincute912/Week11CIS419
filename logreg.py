@@ -2,7 +2,7 @@
     TEMPLATE FOR MACHINE LEARNING HOMEWORK
     AUTHOR Eric Eaton
 '''
-
+import numpy as np
 
 
 class LogisticRegression:
@@ -11,6 +11,10 @@ class LogisticRegression:
         '''
         Constructor
         '''
+        self.alpha = alpha
+        self.regLambda = regLambda
+        self.epsilon = epsilon
+        self.maxNumIters = maxNumIters
 
     
 
@@ -24,6 +28,14 @@ class LogisticRegression:
         Returns:
             a scalar value of the cost  ** make certain you're not returning a 1 x 1 matrix! **
         '''
+        m = len(y)
+        h = self.sigmoid(X.dot(theta))
+        J = (-1/m) * (y.T.dot(np.log(h))+(1-y).T.dot(np.log(1-h)))
+        reg_term = (regLambda / (2*m))* np.sum(theta[1:]**2)
+        J = J+reg_term
+        return J.item()
+    
+
 
     
     
@@ -37,6 +49,13 @@ class LogisticRegression:
         Returns:
             the gradient, an d-dimensional vector
         '''
+
+        m = len(y)
+        h = self.sigmoid(X.dot(theta))
+        grad = (1/m) * X.T.dot(h-y)
+        regTerm = (regLambda/m) * np.concatenate([[0], theta[1,:]], axis = 0)
+        grad += regTerm
+        return grad
     
 
 
@@ -48,6 +67,17 @@ class LogisticRegression:
             y is an n-dimensional numpy vector
         '''
 
+        n, d = X.shape
+        X = np.concatenate([np.ones((n,1)),X],axis = 1)
+        self.theta = np.zeros((d+1,1))
+        for _ in range(self.maxNumIters):
+            gradient = self.computeGradient(self.theta, X, y, self.regLambda)
+            self.theta -=self.alpha *gradient
+
+            cost = self.computeCost(self.theta, X, y, self.regLambda)
+            if cost < self.epsilon:
+                break
+
 
     def predict(self, X):
         '''
@@ -57,10 +87,14 @@ class LogisticRegression:
         Returns:
             an n-dimensional numpy vector of the predictions
         '''
+        n = X.shape[0]
+        X = np.concatenate([np.ones((n,1)),X],axis = 1)
+        probabilities = self.sigmoid(X.dot(self.theta))
+        predictions = (probabilities >= 0.5).astype(int)
 
+        return predictions
 
 
     def sigmoid(self, Z):
-    	'''
-    	Computes the sigmoid function 1/(1+exp(-z))
-    	'''
+        return 1/(1+np.exp(-Z))
+        
