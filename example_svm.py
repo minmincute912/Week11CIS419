@@ -26,12 +26,12 @@ Y = allData[:,-1]
 C = 0.01
 
 # train the SVM
-print "Training the SVM"
+print ("Training the SVM")
 clf = svm.SVC(C=C,kernel='linear')
 clf.fit(X, Y)
 
-print ""
-print "Testing the SVM"
+print ("")
+print ("Testing the SVM")
 
 h = .02  # step size in the mesh
 

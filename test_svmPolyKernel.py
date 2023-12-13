@@ -21,7 +21,7 @@ iris = datasets.load_iris()
 X = iris.data[:, :2]  # we only take the first two features
 Y = iris.target
 
-print "Training the SVMs..."
+print ("Training the SVMs...")
 
 C = 1.0  # value of C for the SVMs
 
@@ -33,8 +33,8 @@ myModel.fit(X, Y)
 model = svm.SVC(C = C, kernel='poly', degree=_polyDegree, coef0=1, gamma=1)
 model.fit(X, Y)
 
-print ""
-print "Testing the SVMs..."
+print ("")
+print ("Testing the SVMs...")
 
 h = .02  # step size in the mesh
 
